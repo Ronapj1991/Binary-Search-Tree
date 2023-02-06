@@ -97,6 +97,37 @@ class Tree
     end
   end
 
+  def height(node)
+    if node.nil?
+      return 0
+    else
+      # Compute the height of each subtree
+      lheight = height(node.left)
+      rheight = height(node.right)
+
+      #Use the larger one
+      if lheight > rheight
+        return lheight + 1
+      else
+        return rheight + 1
+      end
+    end
+  end
+
+  def level_order
+    queue = [@root]
+    result = []
+
+    until queue.empty?
+      node = queue.shift
+      block_given? ? yield(node) : result << node
+      queue << node.left unless node.left.nil?
+      queue << node.right unless node.right.nil?
+    end
+
+    result unless block_given?
+  end
+
   def pretty_print(node = @root, prefix = '', is_left = true)
     pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
