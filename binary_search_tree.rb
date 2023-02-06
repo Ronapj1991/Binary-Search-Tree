@@ -128,6 +128,73 @@ class Tree
     result unless block_given?
   end
 
+  def preorder(node = @root, result = [])
+    return if node.nil?
+    block_given? ? yield(node) : result.push(node.data)
+    preorder(node.left, result)
+    preorder(node.right, result)
+
+    result unless block_given?
+  end
+
+  def inorder(node = @root, result = [])
+    return if node.nil?
+    preorder(node.left, result)
+    block_given? ? yield(node) : result.push(node.data)
+    preorder(node.right, result)
+
+    result unless block_given?
+  end
+
+  def postorder(node = @root, result = [])
+    return if node.nil?
+    preorder(node.left, result)
+    preorder(node.right, result)
+    block_given? ? yield(node) : result.push(node.data)
+
+    result unless block_given?
+  end
+  
+  def depth(node)
+    return nil if node.nil?
+
+    current_node = @root
+    count = 0
+
+    until current_node.data == node.data
+      count += 1
+      current_node = current_node.left if node.data < current_node.data
+      current_node = current_node.right if node.data > current_node.data
+    end
+
+    count
+  end
+
+  def balanced?(node = root)
+    return true if node.nil?
+
+    left_height = height(node.left)
+    right_height = height(node.right)
+
+    return true if (left_height - right_height).abs <= 1 && balanced?(node.left) && balanced?(node.right)
+
+    false
+  end
+
+  def inorder_array(node = root, array = [])
+    unless node.nil?
+      inorder_array(node.left, array)
+      array << node.data
+      inorder_array(node.right, array)
+    end
+    array
+  end
+
+  def rebalance
+    self.data = inorder_array
+    self.root = build_tree(data)
+  end
+
   def pretty_print(node = @root, prefix = '', is_left = true)
     pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
