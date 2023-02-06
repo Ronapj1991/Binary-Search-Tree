@@ -85,8 +85,16 @@ class Tree
     node
   end
 
-  def find(value)
-    
+  def find(node = @root, value)
+    if node.data == value
+      return node
+    elsif node.has_left?
+      find(node.left, value)
+    elsif node.has_right?
+      find(node.right, value)
+    else
+      return "No node contains this value"
+    end
   end
 
   def pretty_print(node = @root, prefix = '', is_left = true)
@@ -98,5 +106,3 @@ end
 
 my_tree = Tree.new()
 my_tree.build_tree(Tree.clean_arr([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]))
-my_tree.delete(3)
-my_tree.pretty_print
